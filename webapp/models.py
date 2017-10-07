@@ -20,17 +20,17 @@ class conversation(models.Model):
     privacy = models.IntegerField(default=0)
     #leadgroupid có quyền thay đổi privacy của conversation
     #trong trường hợp 2 người, ai cũng có quyền thay đổi thông qua cấp hàm riêng
-    leadgroupid = models.ForeignKey('user.id', on_delete=models.CASCADE,)
+    leadgroupid = models.ForeignKey('webapp.user', on_delete=models.CASCADE,)
 
 class paticipants(models.Model):
     paticipant_id = models.BigAutoField(primary_key=True)
-    conversation_id = models.ForeignKey('conversation.conversation_id', on_delete=models.CASCADE,)
-    user_id = models.ForeignKey('user.id', on_delete=models.CASCADE,)
+    conversation_id = models.ForeignKey('webapp.conversation', on_delete=models.CASCADE,)
+    user_id = models.ForeignKey('webapp.user', on_delete=models.CASCADE,)
 
 class messages(models.Model):
     message_id = models.BigAutoField(primary_key=True)
-    conversation_id = models.ForeignKey('conversation.conversation_id', on_delete=models.CASCADE,)
-    from_id = models.ForeignKey('user.id', on_delete=models.CASCADE,)
+    conversation_id = models.ForeignKey('webapp.conversation', on_delete=models.CASCADE,)
+    from_id = models.ForeignKey('webapp.user', on_delete=models.CASCADE,)
     content = models.CharField(max_length=5000)
     timestamp_sent = models.BigIntegerField(default=0)
     # 0: không xóa tự động
