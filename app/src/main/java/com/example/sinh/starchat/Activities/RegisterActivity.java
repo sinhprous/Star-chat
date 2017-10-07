@@ -9,7 +9,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,13 +29,17 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_register);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Register form");
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         mNameView = (EditText) findViewById(R.id.register_name);
         mEmailView = (EditText) findViewById(R.id.register_email);
-        mPassView = (EditText) findViewById(R.id.register_email);
+        mPassView = (EditText) findViewById(R.id.register_password);
         mPass2View = (EditText) findViewById(R.id.register_password_again);
         mPhoneView = (EditText) findViewById(R.id.register_phone);
         mRegisButton = (Button) findViewById(R.id.register_button);
@@ -45,7 +52,17 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                String pass = mPassView.getText().toString();
+                if (pass == null) return;
+                s = s.toString();
+                if (!pass.equals(s)) {
+                    //Log.d("prous", s+", "+pass);
+                    mPass2View.setError("Passwords must be the same!");
+                }
+                else {
+                    //Log.d("prous", s+", "+pass+"true");
+                    mPass2View.setError(null);
+                }
             }
 
             @Override
@@ -57,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
         mRegisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                attemptRegister();
             }
         });
     }
@@ -82,25 +99,46 @@ public class RegisterActivity extends AppCompatActivity {
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPassView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
+        }
+
+        // Check name
+        if (!TextUtils.isEmpty(name) && !isNameValid(name)) {
+            mNameView.setError("Name invalid");
+        }
+
+        // Check phone
+        if (!TextUtils.isEmpty(phone) && !isPhoneValid(phone)) {
+            mPhoneView.setError("Phone number invalid");
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
+
+        mRegisterTask = new UserRegisterTask(name, email, password, passwordAgain, phone);
+        mRegisterTask.execute((Void) null);
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() >= 4;
+    }
+
+    private boolean isEmailValid(String email) {
+        //TODO: Replace this with your own logic
+        return email.contains("@");
+    }
+
+    private boolean isNameValid(String name) {
+        return true;
+    }
+
+    private boolean isPhoneValid(String name) {
+        for (int i = 0; i < name.length(); ++i) if (!Character.isDigit(name.charAt(i))) return false;
+        return true;
     }
 
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
@@ -128,6 +166,18 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean aBoolean) {
             // TODO: parse json
             super.onPostExecute(aBoolean);
+            mRegisterTask = null;
         }
+
+        @Override
+        protected void onCancelled() {
+            mRegisterTask = null;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) finish();
+        return super.onOptionsItemSelected(item);
     }
 }
