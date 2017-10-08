@@ -13,18 +13,16 @@
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <!--<script type="text/javascript" src="js/materialize.min.js"></script>-->
-	<!--<script  src="../static/js/index.js"></script>-->
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+	<script  src="../static/js/index.js"></script>
 </head>
 <body>
 	<div class="login">
 	<h1>Đăng nhập</h1>
     <form method="post">
-		{% csrf_token %}
-    	<input type="text" id = "e" name="e" placeholder="Email" required="required" />
-        <input type="password" id = "p" name="p" placeholder="Password" required="required" />
-        <input class="btn waves-effect waves-light" type="submit" name="action" value="Đăng nhập"></input>
-
+    	<input type="text" name="u" placeholder="Username" required="required" />
+        <input type="password" name="p" placeholder="Password" required="required" />
+        <button class="btn waves-effect waves-light" type="submit" name="action">Đăng nhập</button>
     </form>
 	<div class="inline"><a href="####">Quên mật khẩu</a></div><div class="inline"><a href="####">Đăng ký</a></div>
 	</div>
