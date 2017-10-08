@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_login);
 
-        getSupportActionBar().setTitle("Login form");
+        getSupportActionBar().setTitle("LoginRequest form");
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -223,9 +223,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
             apiService = ApiUtils.getAPIService();
-            apiService.login(new APIService.Login(email, password)).enqueue(new Callback<APIService.Result>() {
+            apiService.login(new APIService.LoginRequest(email, password)).enqueue(new Callback<APIService.LoginResponse>() {
                 @Override
-                public void onResponse(Call<APIService.Result> call, Response<APIService.Result> response) {
+                public void onResponse(Call<APIService.LoginResponse> call, Response<APIService.LoginResponse> response) {
                     showProgress(false);
                     if (response.isSuccessful()) {
                         String res = response.body().toString();
@@ -244,7 +244,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
 
                 @Override
-                public void onFailure(Call<APIService.Result> call, Throwable t) {
+                public void onFailure(Call<APIService.LoginResponse> call, Throwable t) {
                     Toast.makeText(getBaseContext(), "CONNECT ERROR", Toast.LENGTH_SHORT).show();
                     showProgress(false);
                 }

@@ -8,6 +8,8 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
+import com.example.sinh.starchat.Model.*;
+
 /**
  * Created by ADMIN on 10/7/2017.
  */
@@ -15,9 +17,16 @@ import retrofit2.http.POST;
 public interface APIService {
     @POST("/api/login/")
     @Headers({"Content-type: application/json", "Cache-control: max-age=640000"})
-    Call<Result> login(@Body Login body);
+    Call<LoginResponse> login(@Body LoginRequest body);
 
-    class Login {
+    @POST("/api/register/")
+    @Headers({"Content-type: application/json", "Cache-control: max-age=640000"})
+    Call<RegisterResponse> register(@Body User body);
+
+    // Tiny model for api call
+    // Actual model could not be in here
+
+    class LoginRequest {
         @SerializedName("email")
         @Expose
         public String email;
@@ -26,13 +35,24 @@ public interface APIService {
         @Expose
         public String password;
 
-        public Login(String email, String password) {
+        public LoginRequest(String email, String password) {
             this.email = email;
             this.password = password;
         }
     }
 
-    class Result {
+    class LoginResponse {
+        @SerializedName("result")
+        @Expose
+        public String result;
+
+        @Override
+        public String toString() {
+            return result;
+        }
+    }
+
+    class RegisterResponse {
         @SerializedName("result")
         @Expose
         public String result;

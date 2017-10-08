@@ -1,6 +1,11 @@
 package com.example.sinh.starchat.Activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -11,13 +16,23 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.sinh.starchat.JsonParsers.APIService;
+import com.example.sinh.starchat.JsonParsers.ApiUtils;
+import com.example.sinh.starchat.Model.User;
 import com.example.sinh.starchat.R;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    UserRegisterTask mRegisterTask = null;
+    APIService apiService = null;
     EditText mNameView, mEmailView, mPassView, mPass2View, mPhoneView;
+    private View mProgressView;
+    private View mRegisterFormView;
     Button mRegisButton;
 
     @Override
@@ -37,6 +52,8 @@ public class RegisterActivity extends AppCompatActivity {
         mPass2View = (EditText) findViewById(R.id.register_password_again);
         mPhoneView = (EditText) findViewById(R.id.register_phone);
         mRegisButton = (Button) findViewById(R.id.register_button);
+        mRegisterFormView = findViewById(R.id.register_form);
+        mProgressView = findViewById(R.id.register_progress);
 
         mPass2View.addTextChangedListener(new TextWatcher() {
             @Override
@@ -74,10 +91,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void attemptRegister() {
-        if (mRegisterTask != null) {
-            return;
-        }
-
         mNameView.setError(null);
         mEmailView.setError(null);
         mPassView.setError(null);
@@ -112,8 +125,72 @@ public class RegisterActivity extends AppCompatActivity {
             mEmailView.setError(getString(R.string.error_invalid_email));
         }
 
-        mRegisterTask = new UserRegisterTask(name, email, password, passwordAgain, phone);
-        mRegisterTask.execute((Void) null);
+        // TODO: focus on first error field
+        showProgress(true);
+        apiService = ApiUtils.getAPIService();
+        apiService.register(new User(name, email, password)).enqueue(new Callback<APIService.RegisterResponse>() {
+            @Override
+            public void onResponse(Call<APIService.RegisterResponse> call, Response<APIService.RegisterResponse> response) {
+                showProgress(false);
+                if (response.isSuccessful()) {
+                    String res = response.body().toString();
+                    if (res != null && res.equals("false")) {
+                        mPassView.requestFocus();
+                        mPassView.setError(getString(R.string.error_incorrect_password));
+                    } else if (res != null && res.equals("true")){
+                        // TODO: go to welcome activity
+                        Intent intent = new Intent(RegisterActivity.this, ChatActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getBaseContext(), "SERVER ERROR", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getBaseContext(), "ERROR CODE "+response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIService.RegisterResponse> call, Throwable t) {
+                Toast.makeText(getBaseContext(), "CONNECT ERROR", Toast.LENGTH_SHORT).show();
+                showProgress(false);
+            }
+        });
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterFormView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 
     private boolean isPasswordValid(String password) {
@@ -133,40 +210,6 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isPhoneValid(String name) {
         for (int i = 0; i < name.length(); ++i) if (!Character.isDigit(name.charAt(i))) return false;
         return true;
-    }
-
-    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
-        private final String mName;
-        private final String mEmail;
-        private final String mPassword;
-        private final String mPassword2;
-        private final String mPhone;
-
-        UserRegisterTask(String name, String email, String password, String password2, String phone) {
-            mName = name;
-            mEmail = email;
-            mPassword = password;
-            mPassword2 = password2;
-            mPhone = phone;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: Send json
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            // TODO: parse json
-            super.onPostExecute(aBoolean);
-            mRegisterTask = null;
-        }
-
-        @Override
-        protected void onCancelled() {
-            mRegisterTask = null;
-        }
     }
 
     @Override

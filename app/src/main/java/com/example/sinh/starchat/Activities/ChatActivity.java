@@ -45,6 +45,8 @@ public class ChatActivity extends AppCompatActivity {
 
 }
 
+
+// TODO: these model should be refactor to be actual model
 class Message implements IMessage {
     /*...*/
     String id, text;
