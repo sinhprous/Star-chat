@@ -1,0 +1,13 @@
+.login {
+	position: absolute;
+	top: 40%;
+	left: 40%;
+	margin: -100px 0 0 -100px;
+	width:500px;
+	height:500px;
+}
+div.inline {
+    float:left;
+    padding-top: 20px;
+    padding-right: 50px;
+}

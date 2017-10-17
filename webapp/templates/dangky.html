@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+	<link rel="stylesheet" href="../static/css/style.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script>
+        function auth_password(){
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirm_password").value;
+            if (password != confirmPassword) {
+                alert("Passwords do not match.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+	<div class="login">
+	<h1>Đăng ký</h1>
+    <form method="post">
+        {% csrf_token %}
+    	<input type="text" id ="email" name="email" placeholder="Email" required="required" />
+        <input type="text" id ="name" name="name" placeholder="Tên" required="required" />
+        <input type="date" id ="birthday" name="birthday" placeholder="Ngày sinh" required="required" />
+        <input type="password" id ="password" name="password" placeholder="Mật khẩu" required="required" />
+        <input type="password" id ="confirm_password" name="confim_password" placeholder="Xác nhận mật khẩu" required="required" />
+        <button class="btn waves-effect waves-light" onclick="return auth_password()" name="action">Đăng ký</button>
+    </form>
+    </div>
+</body>
+</html>
