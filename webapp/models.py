@@ -1,15 +1,19 @@
 from __future__ import unicode_literals
 from django.db import models
+from rest_framework import serializers
 # Create your models here.
+
+
 class user(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=300, blank=False)
     email = models.CharField(max_length=300, blank=False)
     password = models.CharField(max_length=300, blank=False)
-    frendlist_id = models.BigIntegerField()
-    block_id = models.BigIntegerField()
+    frendlist_id = models.BigIntegerField(default=0)
+    block_id = models.BigIntegerField(default=0)
     '''đang onl thì true, off thì false'''
     status = models.BooleanField(default=False)
+
 
 class conversation(models.Model):
     conversation_id = models.BigAutoField(primary_key=True)
@@ -39,6 +43,12 @@ class messages(models.Model):
     numreaded = models.IntegerField(default=0)
     #file, bằng null nếu tin truyền đi không phải file
     fileup = models.FileField(upload_to='uploads/%Y/%m/%d/')
+
+class friendlist(models.Model):
+    flid = models.BigAutoField(primary_key=True)
+    user_id1 = models.BigIntegerField()
+    user_id2 = models.BigIntegerField()
+
 
 
 

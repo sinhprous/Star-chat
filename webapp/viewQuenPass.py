@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django import forms
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.db import transaction
 from webapp import models
 import numpy as np
 import operator
@@ -13,7 +14,7 @@ from django.http import JsonResponse
 from webapp.models import user
 
 
-class LoginForm(forms.Form):
+class ForgetForm(forms.Form):
     user = forms.CharField(max_length = 100, label="u")
     password = forms.CharField(widget = forms.PasswordInput())
 
@@ -22,38 +23,44 @@ class LoginForm(forms.Form):
         return username
 
 
-def is_accept(email, password):
+def is_exist_mail(email):
     e = user.objects.filter(email = email)
-    if (e.count()==1):
-        if(e[0].password == password):
-            for i in e:
-                i.status = True
-                i.save()
-            return True
+    if e != None:
+        return True
     return False
 
 
+@transaction.atomic
+def android_forget_pass(received_json_data): ##Dung cho API
+    user_entry = user()
+    user_entry.email = received_json_data.get("email", "#")
+
 @csrf_exempt
-def api_login(request):
+def api_forget_pass(request):
     response_data = {}
+    # Cau truc JSON
+    # {
+    #   'email':,
+    # }
     received_json_data = json.loads(request.body.decode("utf-8"))
     if request.method == 'POST':
-        username = received_json_data.get("email", False)
-        password = received_json_data.get("password", False)
-        response_data['result'] = is_accept(username, password)
+        email = received_json_data.get("email", False)
+        if ( len(user.objects.filter(email=email)) > 0):
+            response_data['result'] = "false"
+        else:
+            response_data['result'] = "true"
+        response_data['result'] = is_exist_mail(email)
     return JsonResponse(response_data)
 
 
 def index(request):
-    email = "01923812"
+    email = ""
     if request.method == 'POST':
         # Get the posted form
         email = request.POST["e"]
-        password = request.POST["p"]
-        print(email, password)
-        acceptAccess = is_accept(email, password)
-        if acceptAccess:
-            return render(request, 'success.html')
+        acceptForget = is_exist_mail(email)
+        if acceptForget:
+            return render(request, "acceptforget.html")
         else:
-            return render(request, 'fail.html')
-    return render(request, 'dangnhap.html', {"username" : email})
+            return render(request, "success.html")
+    return render(request, 'quenmatkhau.html', {"username" : email})
