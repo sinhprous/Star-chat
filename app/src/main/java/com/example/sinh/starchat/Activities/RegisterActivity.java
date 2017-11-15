@@ -3,7 +3,9 @@ package com.example.sinh.starchat.Activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,7 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Register form");
+        getSupportActionBar().setTitle("Register");
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
@@ -97,64 +99,95 @@ public class RegisterActivity extends AppCompatActivity {
         mPass2View.setError(null);
         mPhoneView.setError(null);
 
-        String name = mNameView.getText().toString();
-        String email = mEmailView.getText().toString();
-        String password = mPassView.getText().toString();
+        final String name = mNameView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPassView.getText().toString();
         String passwordAgain = mPass2View.getText().toString();
         String phone = mPhoneView.getText().toString();
 
+        boolean cancel = false;
+        View focusView = null;
+
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPassView.setError(getString(R.string.error_invalid_password));
+        if (password.equals(passwordAgain)) {
+            if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+                mPassView.setError(getString(R.string.error_invalid_password));
+                focusView = mPassView;
+                cancel = true;
+            }
+        } else {
+            mPass2View.setError("Passwords must be the same!");
+            focusView = mPass2View;
+            cancel = true;
         }
 
         // Check name
         if (!TextUtils.isEmpty(name) && !isNameValid(name)) {
             mNameView.setError("Name invalid");
+            focusView = mNameView;
+            cancel = true;
         }
 
         // Check phone
         if (!TextUtils.isEmpty(phone) && !isPhoneValid(phone)) {
             mPhoneView.setError("Phone number invalid");
+            focusView = mPhoneView;
+            cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
         }
 
-        // TODO: focus on first error field
-        showProgress(true);
-        apiService = ApiUtils.getAPIService();
-        apiService.register(new User(name, email, password)).enqueue(new Callback<APIService.RegisterResponse>() {
-            @Override
-            public void onResponse(Call<APIService.RegisterResponse> call, Response<APIService.RegisterResponse> response) {
-                showProgress(false);
-                if (response.isSuccessful()) {
-                    String res = response.body().toString();
-                    if (res != null && res.equals("false")) {
-                        mPassView.requestFocus();
-                        mPassView.setError(getString(R.string.error_incorrect_password));
-                    } else if (res != null && res.equals("true")){
-                        // TODO: go to welcome activity
-                        Intent intent = new Intent(RegisterActivity.this, ChatActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getBaseContext(), "SERVER ERROR", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getBaseContext(), "ERROR CODE "+response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            showProgress(true);
+            apiService = ApiUtils.getAPIService();
+            apiService.register(new User(name, email, password)).enqueue(new Callback<APIService.RegisterResponse>() {
+                @Override
+                public void onResponse(Call<APIService.RegisterResponse> call, Response<APIService.RegisterResponse> response) {
+                    showProgress(false);
+                    if (response.isSuccessful()) {
+                        String res = response.body().toString();
+                        if (res != null && res.equals("false")) {
+                            mPassView.requestFocus();
+                            mPassView.setError(getString(R.string.error_incorrect_password));
+                        } else if (res != null && res.equals("true")){
+                            // save current info
+                            SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.CURRENT_USER_PREF, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            @Override
-            public void onFailure(Call<APIService.RegisterResponse> call, Throwable t) {
-                Toast.makeText(getBaseContext(), "CONNECT ERROR", Toast.LENGTH_SHORT).show();
-                showProgress(false);
-            }
-        });
+                            editor.putString(LoginActivity.CURRENT_USER_MAIL_KEY, email);
+                            editor.putString(LoginActivity.CURRENT_USER_PASS_KEY, password);
+                            editor.commit();
+
+                            // start activity
+                            Intent intent = new Intent(RegisterActivity.this, WelcomeActivity.class);
+                            intent.putExtra("name", name);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(getBaseContext(), "SERVER ERROR", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getBaseContext(), "ERROR CODE "+response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<APIService.RegisterResponse> call, Throwable t) {
+                    Toast.makeText(getBaseContext(), "CONNECT ERROR", Toast.LENGTH_SHORT).show();
+                    showProgress(false);
+                }
+            });
+        }
     }
 
     /**

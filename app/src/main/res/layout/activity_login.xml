@@ -63,6 +63,12 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <CheckBox
+                android:id="@+id/checkRemember"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remember me" />
+
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
@@ -77,6 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                style="?android:textAppearanceSmall"
                 android:text="Don't have account? Register!" />
 
         </LinearLayout>

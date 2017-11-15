@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,6 +28,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public static final String CURRENT_USER_PREF = "CurrentUserPref";
     public static final String CURRENT_USER_MAIL_KEY = "CurrentUserMailKey";
     public static final String CURRENT_USER_PASS_KEY = "CurrentUserPassKey";
-
+    public static final String REMEMBER_INFO_KEY = "RememberInfoKey";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -75,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private CheckBox mCheckRemember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_login);
 
-        getSupportActionBar().setTitle("LoginRequest form");
+        getSupportActionBar().setTitle("Login");
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -122,13 +127,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        // auto login if current user exists
-//        String email = getSharedPreferences(CURRENT_USER_PREF, MODE_PRIVATE).getString(CURRENT_USER_MAIL_KEY, "");
-//        if (!email.equals("")){
-//            showProgress(true);
-//            mAuthTask = new UserLoginTask(email, getSharedPreferences(CURRENT_USER_PREF, MODE_PRIVATE).getString(CURRENT_USER_PASS_KEY, ""));
-//            mAuthTask.execute((Void) null);
-//        }
+        mCheckRemember = (CheckBox) findViewById(R.id.checkRemember);
+
+        // auto log in if user info was saved in preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(CURRENT_USER_PREF, Context.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean(REMEMBER_INFO_KEY, false) == true) {
+            Log.d("sinh", "auto login");
+            mEmailView.setText(sharedPreferences.getString(CURRENT_USER_MAIL_KEY, ""));
+            mPasswordView.setText(sharedPreferences.getString(CURRENT_USER_PASS_KEY, ""));
+            attemptLogin();
+        }
     }
 
     private void populateAutoComplete() {
@@ -190,8 +198,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -205,9 +213,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            //mEmailView.setError(getString(R.string.error_field_required));
-            //focusView = mEmailView;
-            //cancel = true;
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
@@ -222,6 +230,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
+            // debug, for virtual log in
+            // TODO: remove debug
+            if (email.equals("sinh@gmail.com") && password.equals("1234")) {
+                showProgress(false);
+
+                // save current info
+                SharedPreferences sharedPreferences = getSharedPreferences(CURRENT_USER_PREF, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(CURRENT_USER_MAIL_KEY, email);
+                editor.putString(CURRENT_USER_PASS_KEY, password);
+                if (mCheckRemember.isChecked()) {
+                    editor.putBoolean(REMEMBER_INFO_KEY, true);
+                }
+                editor.commit();
+
+                Intent intent = new Intent(LoginActivity.this, ChatActivity.class);
+                startActivity(intent);
+                return;
+            }
+            // TODO: end debug
             apiService = ApiUtils.getAPIService();
             apiService.login(new APIService.LoginRequest(email, password)).enqueue(new Callback<APIService.LoginResponse>() {
                 @Override
@@ -233,6 +261,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             mPasswordView.requestFocus();
                             mPasswordView.setError(getString(R.string.error_incorrect_password));
                         } else if (res != null && res.equals("true")){
+                            // save current info
+                            SharedPreferences sharedPreferences = getSharedPreferences(CURRENT_USER_PREF, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            editor.putString(CURRENT_USER_MAIL_KEY, email);
+                            editor.putString(CURRENT_USER_PASS_KEY, password);
+                            if (mCheckRemember.isChecked()) {
+                                editor.putBoolean(REMEMBER_INFO_KEY, true);
+                            } else {
+                                editor.remove(REMEMBER_INFO_KEY);
+                            }
+                            editor.commit();
+
+                            // start activity
                             Intent intent = new Intent(LoginActivity.this, ChatActivity.class);
                             startActivity(intent);
                         } else {

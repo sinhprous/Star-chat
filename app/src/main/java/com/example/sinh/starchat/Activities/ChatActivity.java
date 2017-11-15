@@ -36,7 +36,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public boolean onSubmit(CharSequence input) {
                 //validate and send message
-                // author 0 is me
+                // author 1 is me, others are others
                 adapter.addToStart(new Message(input.toString()), true);
                 return true;
             }
@@ -88,7 +88,7 @@ class Author implements IUser {
 
     @Override
     public String getId() {
-        return ""+(i++)%2;
+        return ""+(i++)%4;
     }
 
     @Override
