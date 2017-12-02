@@ -31,7 +31,11 @@
             android:name=".Activities.ChatActivity"
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.WelcomeActivity"></activity>
+        <activity android:name=".Activities.WelcomeActivity" />
+        <activity
+            android:name=".Activities.HomeActivity"
+            android:label="@string/title_activity_home_activity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

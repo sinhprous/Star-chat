@@ -245,7 +245,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
                 editor.commit();
 
-                Intent intent = new Intent(LoginActivity.this, ChatActivity.class);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
                 return;
             }
@@ -275,7 +275,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             editor.commit();
 
                             // start activity
-                            Intent intent = new Intent(LoginActivity.this, ChatActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
                         } else {
                             Toast.makeText(getBaseContext(), "SERVER ERROR", Toast.LENGTH_SHORT).show();

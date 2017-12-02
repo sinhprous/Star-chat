@@ -47,7 +47,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     editor.remove(LoginActivity.REMEMBER_INFO_KEY);
                     editor.commit();
                 }
-                startActivity(new Intent(WelcomeActivity.this, ChatActivity.class));
+                startActivity(new Intent(WelcomeActivity.this, HomeActivity.class));
             }
         });
     }
