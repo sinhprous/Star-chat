@@ -13,6 +13,7 @@ import com.stfalcon.chatkit.commons.models.IUser;
 import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
+import com.example.sinh.starchat.IModel.Message;
 
 import java.util.Date;
 
@@ -43,61 +44,4 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-}
-
-
-// TODO: these model should be refactor to be actual model
-class Message implements IMessage {
-    /*...*/
-    String id, text;
-    Author author;
-    Date createdAt;
-
-    public Message(String text) {
-        this.text = text;
-    }
-
-    @Override
-    public String getId() {
-        return "1";
-    }
-
-    @Override
-    public String getText() {
-        return getUser().getId()+":"+text;
-    }
-
-    @Override
-    public Author getUser() {
-        return new Author();
-    }
-
-    @Override
-    public Date getCreatedAt() {
-        return new Date();
-    }
-}
-
-
-class Author implements IUser {
-
-   /*...*/
-
-    String id, name, avatar;
-    static int i = 0;
-
-    @Override
-    public String getId() {
-        return ""+(i++)%4;
-    }
-
-    @Override
-    public String getName() {
-        return "name";
-    }
-
-    @Override
-    public String getAvatar() {
-        return null;
-    }
 }
