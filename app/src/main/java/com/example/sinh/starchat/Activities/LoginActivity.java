@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.sinh.starchat.JsonParsers.APIService;
 import com.example.sinh.starchat.JsonParsers.ApiUtils;
+import com.example.sinh.starchat.Model.User;
 import com.example.sinh.starchat.R;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public static final String CURRENT_USER_MAIL_KEY = "CurrentUserMailKey";
     public static final String CURRENT_USER_PASS_KEY = "CurrentUserPassKey";
     public static final String REMEMBER_INFO_KEY = "RememberInfoKey";
+    public static User currentUser;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -242,8 +244,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 editor.putString(CURRENT_USER_PASS_KEY, password);
                 if (mCheckRemember.isChecked()) {
                     editor.putBoolean(REMEMBER_INFO_KEY, true);
+                }  else {
+                    editor.remove(REMEMBER_INFO_KEY);
                 }
                 editor.commit();
+
+                currentUser = new User("1", "sinh", email, password);
 
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
@@ -274,6 +280,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             }
                             editor.commit();
 
+                            currentUser = new User("1", "sinh", email, password);
                             // start activity
                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
@@ -295,12 +302,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() >= 4;
     }
 

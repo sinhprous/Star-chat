@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Activities.ChatActivity">
+
+    <item
+        android:id="@+id/action_manage_participants"
+        android:orderInCategory="300"
+        android:title="Manage participants"
+        app:showAsAction="never"></item>
+    <item
+        android:id="@+id/action_change_conversation_name"
+        android:orderInCategory="300"
+        android:title="Change conversation name"
+        app:showAsAction="never"></item>
+    <item
+        android:id="@+id/action_leave_conversation"
+        android:orderInCategory="300"
+        android:title="Leave conversation"
+        app:showAsAction="never"></item>
+
+</menu>

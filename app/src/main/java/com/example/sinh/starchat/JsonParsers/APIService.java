@@ -1,5 +1,6 @@
 package com.example.sinh.starchat.JsonParsers;
 
+import com.example.sinh.starchat.Model.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,8 +8,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
-
-import com.example.sinh.starchat.Model.*;
 
 /**
  * Created by ADMIN on 10/7/2017.
@@ -45,7 +44,7 @@ public interface APIService {
         @SerializedName("result")
         @Expose
         public String result;
-
+        // TODO: return user info
         @Override
         public String toString() {
             return result;

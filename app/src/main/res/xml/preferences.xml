@@ -1,0 +1,7 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="first_preferencescreen">
+        <CheckBoxPreference
+            android:key="pref_key_noti"
+            android:title="Notification"
+            android:defaultValue="false"/>
+</PreferenceScreen>

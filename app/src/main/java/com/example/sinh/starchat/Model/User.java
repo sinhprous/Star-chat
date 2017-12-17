@@ -1,32 +1,25 @@
 package com.example.sinh.starchat.Model;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.stfalcon.chatkit.commons.models.IUser;
 
 /**
  * Created by ADMIN on 10/8/2017.
  */
 
-public class User {
-    private int id;
+public class User implements IUser{
+    @SerializedName("id")
+    private String id;
     @SerializedName("name")
-    @Expose
     private String name;
     @SerializedName("email")
-    @Expose
     private String email;
     @SerializedName("password")
-    @Expose
     private String password;
-    //private String friendlist_id;
+    @SerializedName("online")
     private boolean online = false;
-
-    public User(int id, String name, String email, String password) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
+    @SerializedName("avatar")
+    private String avatar;
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -34,11 +27,32 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public User(String id, String name, String email, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.avatar = null;
+    }
+
+    public User(String id, String name, String email, String password, String avatar) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.avatar = avatar;
+    }
+
+    @Override
+    public String getAvatar() {
+        return this.avatar;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
