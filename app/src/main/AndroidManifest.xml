@@ -35,10 +35,15 @@
         <activity
             android:name=".Activities.HomeActivity"
             android:label="@string/title_activity_home_activity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity
             android:name=".Activities.NotiSoundSettingsActivity"
             android:label="@string/title_activity_noti_sound_settings" />
+        <activity android:name=".Activities.ConversationManagerActivity"></activity>
     </application>
 
 </manifest>

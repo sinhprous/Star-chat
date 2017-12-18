@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Path;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.example.sinh.starchat.Model.Message;
 import com.example.sinh.starchat.Model.User;
 import com.example.sinh.starchat.R;
+import com.example.sinh.starchat.Utils.PathUtil;
 import com.squareup.picasso.Picasso;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessageHolders;
@@ -129,7 +131,7 @@ public class ChatActivity extends AppCompatActivity {
             // TODO: call api to upload file, remember to check size
             //("▼")
             try {
-                String path = getPath(getBaseContext(), uri);
+                String path = PathUtil.getPath(getBaseContext(), uri);
                 //Log.d("sinh", uri.toString());
                 String baseName = path.substring(path.lastIndexOf("/") + 1);
                 adapter.addToStart(new Message(i++ + "", baseName, LoginActivity.currentUser, System.currentTimeMillis(), path), true);
@@ -138,28 +140,6 @@ public class ChatActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static String getPath(Context context, Uri uri) throws URISyntaxException {
-        //if ("content".equalsIgnoreCase(uri.getScheme())) {
-        if (true) {
-            String[] projection = {"_data"};
-            Cursor cursor = null;
-
-            try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                int column_index = cursor.getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
-                }
-            } catch (Exception e) {
-                // Eat it
-            }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
     }
 
     void displayOptionDialog(final Message message) {
@@ -290,6 +270,8 @@ public class ChatActivity extends AppCompatActivity {
             break;
             case R.id.action_manage_participants:
                 // TODO:
+                Intent intent = new Intent(ChatActivity.this, ConversationManagerActivity.class);
+                startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);

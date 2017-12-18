@@ -1,6 +1,7 @@
 package com.example.sinh.starchat.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.example.sinh.starchat.Fragments.HomeFragment;
 import com.example.sinh.starchat.R;
@@ -22,8 +24,8 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("HomeActivity", "onCreate");
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.activity_home);
 
         fragmentPagerAdapter = new HomeFragmentPagerAdapter(getSupportFragmentManager(), getApplicationContext());
@@ -33,14 +35,13 @@ public class HomeActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.home_icon);
-        tabLayout.getTabAt(1).setIcon(R.drawable.list_icon);
-        tabLayout.getTabAt(2).setIcon(R.drawable.person_icon);
+        tabLayout.getTabAt(0).setIcon(R.drawable.home_icon).getIcon().setColorFilter(ContextCompat.getColor(getBaseContext(), R.color.white), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(1).setIcon(R.drawable.list_icon).getIcon().setColorFilter(ContextCompat.getColor(getBaseContext(), R.color.gray), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(2).setIcon(R.drawable.person_icon).getIcon().setColorFilter(ContextCompat.getColor(getBaseContext(), R.color.gray), PorterDuff.Mode.SRC_IN);
 
         viewPager.setCurrentItem(0);
         viewPager.setOffscreenPageLimit(3);
 
-        tabLayout.getTabAt(0).getIcon().setColorFilter(ContextCompat.getColor(getBaseContext(), R.color.white), PorterDuff.Mode.SRC_IN);
         tabLayout.addOnTabSelectedListener(
                 new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
 
@@ -66,6 +67,10 @@ public class HomeActivity extends AppCompatActivity {
         );
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }
 
 class HomeFragmentPagerAdapter extends FragmentPagerAdapter {

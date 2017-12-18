@@ -48,6 +48,10 @@ public class User implements IUser{
         return this.avatar;
     }
 
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public String getId() {
         return id;
     }
