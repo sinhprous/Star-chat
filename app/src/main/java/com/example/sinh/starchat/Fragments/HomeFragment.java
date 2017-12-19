@@ -302,7 +302,7 @@ public class HomeFragment extends Fragment {
                         builderSingle.setIcon(R.drawable.selector);
                         builderSingle.setTitle("Select One Option: ");
 
-                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice);
+                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_item);
                         arrayAdapter.add("Change avatar");
                         arrayAdapter.add("Change name");
                         arrayAdapter.add("Change password");

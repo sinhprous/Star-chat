@@ -147,7 +147,7 @@ public class ChatActivity extends AppCompatActivity {
         builderSingle.setIcon(R.drawable.selector);
         builderSingle.setTitle("Select One Option: ");
 
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ChatActivity.this, android.R.layout.select_dialog_singlechoice);
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ChatActivity.this, android.R.layout.select_dialog_item);
         arrayAdapter.add("Delete");
         arrayAdapter.add("Delete after 10 minute");
 
@@ -224,8 +224,8 @@ public class ChatActivity extends AppCompatActivity {
                 break;
             case R.id.action_change_conversation_name: {
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setTitle("Title");
-                alert.setMessage("Message");
+                alert.setTitle("Change conversation name");
+                //alert.setMessage("");
                 final EditText input = new EditText(this);
                 input.setText(conversationName);
                 alert.setView(input);
@@ -248,11 +248,8 @@ public class ChatActivity extends AppCompatActivity {
             case R.id.action_leave_conversation: {
                 // TODO: call api
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setTitle("Title");
-                alert.setMessage("Message");
-                final TextView input = new TextView(this);
-                input.setText("Leave the conversation?");
-                alert.setView(input);
+                alert.setTitle("Confirm");
+                alert.setMessage("Leave the conversation?");
 
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {

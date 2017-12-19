@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ public class ConversationManagerActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     SearchView searchView;
+    Button okButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,7 @@ public class ConversationManagerActivity extends AppCompatActivity {
 
         searchView = (SearchView) findViewById(R.id.search_view);
         recyclerView = (RecyclerView) findViewById(R.id.friend_list);
+        okButton = (Button) findViewById(R.id.fbutton_ok);
 
         ArrayList<User> data = new ArrayList<>();
         // TODO: load friend list
@@ -45,6 +48,13 @@ public class ConversationManagerActivity extends AppCompatActivity {
         data.add(new User("3", "khang", "", ""));
         data.add(new User("4", "long", "", ""));
         data.add(new User("5", "son", "", ""));
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: call api 
+            }
+        });
 
         RecyclerView.Adapter<FriendViewHolder> adapter = new FriendAdapter(getBaseContext(), data);
         recyclerView.setAdapter(adapter);
@@ -116,6 +126,7 @@ public class ConversationManagerActivity extends AppCompatActivity {
         public void onBindViewHolder(FriendViewHolder holder, int position) {
             Picasso.with(context).load(data.get(position).getAvatar()).transform(new CircleTransform()).into(holder.imageView);
             holder.textView.setText(data.get(position).getName());
+            // TODO: check checkbox 
             //holder.checkBox.setVisibility(View.INVISIBLE);
         }
 

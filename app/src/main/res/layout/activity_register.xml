@@ -8,7 +8,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/background"
     tools:context="com.example.sinh.starchat.Activities.LoginActivity">
 
     <ProgressBar
@@ -97,13 +96,14 @@
                     android:maxLines="1"/>
             </android.support.design.widget.TextInputLayout>
 
-            <Button
+            <info.hoang8f.widget.FButton
                 android:id="@+id/register_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Register new account"
+                android:textColor="@color/white"
                 android:textStyle="bold" />
 
         </LinearLayout>
